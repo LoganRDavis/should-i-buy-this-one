@@ -15,7 +15,20 @@ GOOGLE_SHOPPING_URL = 'https://www.google.com/search?tbm=shop'
 @csrf_exempt 
 def index(request):
     if request.method == 'POST':
-        body = request.POST
+        body = json.loads(request.body)
+        if 'name' not in body or len(body['name']) == 0:
+            return HttpResponse('Invalid search name', status=400)
+        if 'priceWeight' not in body or len(body['priceWeight']) == 0:
+            return HttpResponse('Invalid search price weight', status=400)
+        if 'ratingWeight' not in body or len(body['ratingWeight']) == 0:
+            return HttpResponse('Invalid search rating weight', status=400)
+        if 'reviewCountWeight' not in body or len(body['reviewCountWeight']) == 0:
+            return HttpResponse('Invalid search review count weight', status=400)
+
+        body['priceWeight'] = int(body['priceWeight'])
+        body['ratingWeight'] = int(body['ratingWeight'])
+        body['reviewCountWeight'] = int(body['reviewCountWeight'])
+
         startUrl = GOOGLE_SHOPPING_URL + '&q=' + body['name']
         startPage = requests.get(startUrl)
 
@@ -42,7 +55,7 @@ def index(request):
             product.calculatePercentile('reviewCountPercentile', i, len(products) - 1)
 
         for product in products:
-            product.calculateValue(100, 100, 100)
+            product.calculateValue(body['priceWeight'], body['ratingWeight'], body['reviewCountWeight'])
 
         products.sort(key=lambda x: x.calculatedValue)
         for  i, product in enumerate(products):
@@ -51,7 +64,11 @@ def index(request):
 
         lookup = Lookup(
             requestIp=get_client_ip(request), 
-            name=body['name'], resultUrl=products[-1].url, 
+            name=body['name'], 
+            resultUrl=products[-1].url, 
+            priceWeight=body['priceWeight'], 
+            ratingWeight=body['ratingWeight'], 
+            reviewCountWeight=body['reviewCountWeight'], 
             resultValue=int(products[-1].calculatedValue)
         )
         lookup.save()

@@ -26,7 +26,8 @@ a:hover {
 
 html,
 body {
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   background-color: #333;
 }
 

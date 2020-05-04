@@ -5,6 +5,9 @@ class Lookup(models.Model):
     requestIp = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     resultUrl = models.CharField(max_length=2083)
+    priceWeight = models.IntegerField()
+    ratingWeight = models.IntegerField()
+    reviewCountWeight = models.IntegerField()
     resultValue = models.IntegerField()
 
     def __str__(self):

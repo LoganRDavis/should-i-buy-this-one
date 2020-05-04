@@ -2,7 +2,7 @@ class GoogleProduct:
     def __init__(self, productDiv):
         self.url = None
         self.imageUrl = None
-        self.title = productDiv.find('a').get_text()
+        self.title = None
         self.price = None
         self.rating = 0
         self.reviewCount = 0
@@ -11,6 +11,11 @@ class GoogleProduct:
         self.ratingPercentile = None
         self.reviewCountPercentile = None
         self.calculatedValue = None
+
+        try:
+            self.title = productDiv.find('div', class_='rgHvZc').find('a').get_text()
+        except:
+             self.title = None
 
         self.url = productDiv.find('a').get('href')
         if 'http://www.google.com' not in self.url and 'https://www.google.com' not in self.url:
