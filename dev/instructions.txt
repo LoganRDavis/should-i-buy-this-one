@@ -1,0 +1,25 @@
+Running Server:
+	command palette -> python interpreter
+	start terminal
+	python manage.py runserver 80
+
+Updating DB:
+	python manage.py makemigrations
+	python manage.py migrate
+
+Deploying Docker to AWS:
+	pipenv run pip freeze > requirements.txt
+	using sibto.ppk
+	ssh to ec2-user@ec2-3-23-126-64.us-east-2.compute.amazonaws.com/
+	login to docker
+	docker run -d -p 80:80 loganrickydavis/should_i_buy_this_one
+	
+Deploying Docker to Heroku:
+	pipenv run pip freeze > requirements.txt
+	heroku container:login
+	docker build -t registry.heroku.com/should-i-buy-this-one/web . 
+	docker run -d --name django-heroku -e "PORT=8765" -e "DEBUG=1" -p 8007:8765 registry.heroku.com/should-i-buy-this-one/web
+	docker stop django-heroku
+	docker rm django-heroku
+	docker push registry.heroku.com/should-i-buy-this-one/web
+	heroku container:release -a should-i-buy-this-one web
